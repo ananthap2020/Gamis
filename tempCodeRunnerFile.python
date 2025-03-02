@@ -1,0 +1,49 @@
+import re
+
+def load_common_passwords(filepath):
+    """Load a list of common passwords from a file."""
+    with open(filepath, 'r') as file:
+        return set(file.read().splitlines())
+
+def password_strength(password, common_passwords):
+    """Evaluate the strength of a password."""
+    # Criteria
+    length_criteria = len(password) >= 8
+    complexity_criteria = (
+        re.search(r'[a-z]', password) and  # Lowercase
+        re.search(r'[A-Z]', password) and  # Uppercase
+        re.search(r'[0-9]', password) and   # Digit
+        re.search(r'[\W_]', password)        # Special character
+    )
+    common_password_criteria = password not in common_passwords
+
+    # Calculate strength score
+    score = 0
+    if length_criteria:
+        score += 1
+    if complexity_criteria:
+        score += 1
+    if common_password_criteria:
+        score += 1
+
+    # Determine strength level
+    if score == 3:
+        return "Strong"
+    elif score == 2:
+        return "Medium"
+    else:
+        return "Weak"
+
+def main():
+    # Load common passwords (you'll need a file with common passwords)
+    common_passwords = load_common_passwords('common_passwords.txt')
+
+    # Input password
+    password = input("Enter a password to evaluate its strength: ")
+
+    # Evaluate strength
+    strength = password_strength(password, common_passwords)
+    print(f"Password Strength: {strength}")
+
+if __name__ == "__main__":
+    main()
